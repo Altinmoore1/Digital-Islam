@@ -123,7 +123,7 @@ const ProjectManager: React.FC = () => {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-bold mb-2 text-gray-700">Goal Amount ($)</label>
+                        <label className="block text-sm font-bold mb-2 text-gray-700">Goal Amount (SLE)</label>
                         <input
                             type="number"
                             className="w-full p-4 border border-gray-200 rounded-xl focus:ring-4 focus:ring-green-500/10 focus:border-green-500 transition-all outline-none"
@@ -134,7 +134,7 @@ const ProjectManager: React.FC = () => {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-bold mb-2 text-gray-700">Raised Amount ($)</label>
+                        <label className="block text-sm font-bold mb-2 text-gray-700">Raised Amount (SLE)</label>
                         <input
                             type="number"
                             className="w-full p-4 border border-gray-200 rounded-xl focus:ring-4 focus:ring-green-500/10 focus:border-green-500 transition-all outline-none"
@@ -211,9 +211,9 @@ const ProjectManager: React.FC = () => {
                                         </td>
                                         <td className="p-6">
                                             <div className="text-sm font-medium text-gray-900">
-                                                ${parseInt(project.raised || '0').toLocaleString()}
+                                                SLE {parseInt(project.raised || '0').toLocaleString()}
                                                 <span className="text-gray-400 mx-1">/</span>
-                                                <span className="text-gray-500">${parseInt(project.goal || '0').toLocaleString()}</span>
+                                                <span className="text-gray-500">SLE {parseInt(project.goal || '0').toLocaleString()}</span>
                                             </div>
                                             <div className="w-24 h-1.5 bg-gray-100 rounded-full mt-2 overflow-hidden">
                                                 <div
