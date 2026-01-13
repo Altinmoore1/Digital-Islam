@@ -1,0 +1,7 @@
+{
+  "name": "Digital Islam - Edutainment Through Divine Inspiration",
+  "description": "A faith-based digital platform dedicated to educating, inspiring, and uplifting communities through Islamic knowledge, charity, and creative engagement.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
