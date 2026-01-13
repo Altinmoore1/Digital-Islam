@@ -77,8 +77,8 @@ const ProjectManager: React.FC = () => {
                     </div>
                 </div>
 
-                <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-6">
-                    <div className="col-span-2">
+                <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="col-span-1 md:col-span-2">
                         <label className="block text-sm font-bold mb-2 text-gray-700">Project Title</label>
                         <input
                             required
@@ -89,7 +89,7 @@ const ProjectManager: React.FC = () => {
                         />
                     </div>
 
-                    <div className="col-span-2">
+                    <div className="col-span-1 md:col-span-2">
                         <label className="block text-sm font-bold mb-2 text-gray-700">Description</label>
                         <textarea
                             required
@@ -144,7 +144,7 @@ const ProjectManager: React.FC = () => {
                         />
                     </div>
 
-                    <div className="col-span-2 flex gap-4 mt-4">
+                    <div className="col-span-1 md:col-span-2 flex gap-4 mt-4">
                         <button
                             type="submit"
                             className="flex-1 bg-green-700 text-white py-4 rounded-xl font-bold hover:bg-green-800 transition-all shadow-lg hover:shadow-green-700/20 active:scale-95"
