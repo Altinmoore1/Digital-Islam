@@ -113,7 +113,7 @@ const ProjectManager: React.FC = () => {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-bold mb-2 text-gray-700">Thumbnail URL</label>
+                        <label className="block text-sm font-bold mb-2 text-gray-700">Thumbnail URL (Optional)</label>
                         <input
                             className="w-full p-4 border border-gray-200 rounded-xl focus:ring-4 focus:ring-green-500/10 focus:border-green-500 transition-all outline-none"
                             value={currentProject.thumbnail || ''}
@@ -134,7 +134,7 @@ const ProjectManager: React.FC = () => {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-bold mb-2 text-gray-700">Raised Amount (SLE)</label>
+                        <label className="block text-sm font-bold mb-2 text-gray-700">Raised Amount (SLE) (Optional)</label>
                         <input
                             type="number"
                             className="w-full p-4 border border-gray-200 rounded-xl focus:ring-4 focus:ring-green-500/10 focus:border-green-500 transition-all outline-none"
