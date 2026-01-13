@@ -14,7 +14,6 @@ import AdminPanel from './components/AdminPanel';
 
 import Login from './components/Login';
 import ProtectedRoute from './components/ProtectedRoute';
-import ProtectedRoute from './components/ProtectedRoute';
 import { DataProvider } from './context/DataContext';
 import ScrollToTop from './components/ScrollToTop';
 
