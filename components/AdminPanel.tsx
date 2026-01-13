@@ -289,10 +289,10 @@ const AdminPanel: React.FC = () => {
                                 <div className="space-y-8">
                                     <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-200">
                                         <h3 className="text-2xl font-bold mb-6 text-green-900">Add New Media</h3>
-                                        <form onSubmit={handleMediaSubmit} className="grid grid-cols-2 gap-4">
-                                            <input placeholder="Batch Title (e.g. Graduation 2024)" className="p-3 border rounded-lg col-span-2" value={newMedia.title} onChange={e => setNewMedia({ ...newMedia, title: e.target.value })} required />
+                                        <form onSubmit={handleMediaSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <input placeholder="Batch Title (e.g. Graduation 2024)" className="p-3 border rounded-lg col-span-1 md:col-span-2" value={newMedia.title} onChange={e => setNewMedia({ ...newMedia, title: e.target.value })} required />
 
-                                            <div className="col-span-2">
+                                            <div className="col-span-1 md:col-span-2">
                                                 <label className="block text-sm font-bold mb-1 text-gray-700">Select Images/Videos</label>
                                                 <input
                                                     type="file"
@@ -305,7 +305,7 @@ const AdminPanel: React.FC = () => {
                                                 <p className="text-xs text-gray-500 mt-1">Hold Ctrl/Cmd to select multiple files.</p>
                                             </div>
 
-                                            <select className="p-3 border rounded-lg col-span-2" value={newMedia.category} onChange={e => setNewMedia({ ...newMedia, category: e.target.value })}>
+                                            <select className="p-3 border rounded-lg col-span-1 md:col-span-2" value={newMedia.category} onChange={e => setNewMedia({ ...newMedia, category: e.target.value })}>
                                                 <option>Charity</option>
                                                 <option>Education</option>
                                                 <option>Entertainment</option>
@@ -314,7 +314,7 @@ const AdminPanel: React.FC = () => {
 
                                             <button
                                                 disabled={isUploading}
-                                                className="col-span-2 bg-green-700 text-white py-3 rounded-lg font-bold hover:bg-green-800 disabled:opacity-50"
+                                                className="col-span-1 md:col-span-2 bg-green-700 text-white py-3 rounded-lg font-bold hover:bg-green-800 disabled:opacity-50"
                                             >
                                                 {isUploading ? 'Uploading & Adding...' : 'Add to Gallery'}
                                             </button>
@@ -323,7 +323,7 @@ const AdminPanel: React.FC = () => {
 
                                     <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-200">
                                         <h3 className="text-xl font-bold mb-4">Current Gallery Items</h3>
-                                        <div className="grid grid-cols-4 gap-4">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                                             {data.gallery.map(item => (
                                                 <div key={item.id} className="relative group rounded-lg overflow-hidden border">
                                                     {item.type === 'video' ? (
@@ -356,74 +356,76 @@ const AdminPanel: React.FC = () => {
                             {activeTab === 'donors' && (
                                 <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
                                     <div className="p-6 border-b"><h3 className="text-xl font-bold">Donation Log</h3></div>
-                                    <table className="w-full text-left">
-                                        <thead className="bg-gray-50 text-xs uppercase text-gray-500 font-bold">
-                                            <tr>
-                                                <th className="p-4">Name</th>
-                                                <th className="p-4">Email</th>
-                                                <th className="p-4">Phone</th>
-                                                <th className="p-4">Occupation</th>
-                                                <th className="p-4">Location</th>
-                                                <th className="p-4">Project</th>
-                                                <th className="p-4">Pledge</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y">
-                                            {data.donors.length === 0 && <tr><td colSpan={6} className="p-4 text-center text-gray-500">No donors found.</td></tr>}
-                                            {data.donors.map(d => (
-                                                <tr key={d.id} className="hover:bg-gray-50">
-                                                    <td className="p-4 font-medium">{d.name}</td>
-                                                    <td className="p-4 text-sm">{d.email}</td>
-                                                    <td className="p-4 text-sm">{d.phone}</td>
-                                                    <td className="p-4 text-sm">{d.occupation}</td>
-                                                    <td className="p-4 text-sm">{d.location}</td>
-                                                    <td className="p-4 text-sm font-semibold text-green-800">{d.project || 'General'}</td>
-                                                    <td className="p-4 text-green-700 font-bold">{d.pledge}</td>
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-left min-w-[800px]">
+                                            <thead className="bg-gray-50 text-xs uppercase text-gray-500 font-bold">
+                                                <tr>
+                                                    <th className="p-4">Name</th>
+                                                    <th className="p-4">Email</th>
+                                                    <th className="p-4">Phone</th>
+                                                    <th className="p-4">Occupation</th>
+                                                    <th className="p-4">Location</th>
+                                                    <th className="p-4">Project</th>
+                                                    <th className="p-4">Pledge</th>
                                                 </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
+                                            </thead>
+                                            <tbody className="divide-y">
+                                                {data.donors.length === 0 && <tr><td colSpan={6} className="p-4 text-center text-gray-500">No donors found.</td></tr>}
+                                                {data.donors.map(d => (
+                                                    <tr key={d.id} className="hover:bg-gray-50">
+                                                        <td className="p-4 font-medium">{d.name}</td>
+                                                        <td className="p-4 text-sm">{d.email}</td>
+                                                        <td className="p-4 text-sm">{d.phone}</td>
+                                                        <td className="p-4 text-sm">{d.occupation}</td>
+                                                        <td className="p-4 text-sm">{d.location}</td>
+                                                        <td className="p-4 text-sm font-semibold text-green-800">{d.project || 'General'}</td>
+                                                        <td className="p-4 text-green-700 font-bold">{d.pledge}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
                             )}
 
-                            {activeTab === 'volunteers' && (
-                                <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-                                    <div className="p-6 border-b"><h3 className="text-xl font-bold">Team Signups</h3></div>
-                                    <table className="w-full text-left">
-                                        <thead className="bg-gray-50 text-xs uppercase text-gray-500 font-bold">
-                                            <tr>
-                                                <th className="p-4">Name</th>
-                                                <th className="p-4">Email</th>
-                                                <th className="p-4">Phone</th>
-                                                <th className="p-4">Occupation</th>
-                                                <th className="p-4">Location</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y">
-                                            {data.volunteers.length === 0 && <tr><td colSpan={5} className="p-4 text-center text-gray-500">No volunteers found.</td></tr>}
-                                            {data.volunteers.map(v => (
-                                                <tr key={v.id} className="hover:bg-gray-50">
-                                                    <td className="p-4 font-medium">{v.name}</td>
-                                                    <td className="p-4 text-blue-600 underline text-sm">{v.email}</td>
-                                                    <td className="p-4 text-sm">{v.phone}</td>
-                                                    <td className="p-4 text-sm">{v.occupation}</td>
-                                                    <td className="p-4 text-gray-500">{v.location}</td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
+                                    {activeTab === 'volunteers' && (
+                                        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                                            <div className="p-6 border-b"><h3 className="text-xl font-bold">Team Signups</h3></div>
+                                            <div className="overflow-x-auto">
+                                                <table className="w-full text-left min-w-[800px]">
+                                                    <thead className="bg-gray-50 text-xs uppercase text-gray-500 font-bold">
+                                                        <tr>
+                                                            <th className="p-4">Name</th>
+                                                            <th className="p-4">Email</th>
+                                                            <th className="p-4">Phone</th>
+                                                            <th className="p-4">Occupation</th>
+                                                            <th className="p-4">Location</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody className="divide-y">
+                                                        {data.volunteers.length === 0 && <tr><td colSpan={5} className="p-4 text-center text-gray-500">No volunteers found.</td></tr>}
+                                                        {data.volunteers.map(v => (
+                                                            <tr key={v.id} className="hover:bg-gray-50">
+                                                                <td className="p-4 font-medium">{v.name}</td>
+                                                                <td className="p-4 text-blue-600 underline text-sm">{v.email}</td>
+                                                                <td className="p-4 text-sm">{v.phone}</td>
+                                                                <td className="p-4 text-sm">{v.occupation}</td>
+                                                                <td className="p-4 text-gray-500">{v.location}</td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
                             )}
-                        </div>
-                    )}
+                                        </div>
+                                    )}
 
-                    {activeTab === 'projects' && (
-                        <ProjectManager />
-                    )}
-                </div>
+                                    {activeTab === 'projects' && (
+                                        <ProjectManager />
+                                    )}
+                                </div>
             </main>
         </div >
-    );
+                );
 };
 
-export default AdminPanel;
+                export default AdminPanel;
