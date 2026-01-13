@@ -370,7 +370,7 @@ const AdminPanel: React.FC = () => {
                                                 </tr>
                                             </thead>
                                             <tbody className="divide-y">
-                                                {data.donors.length === 0 && <tr><td colSpan={6} className="p-4 text-center text-gray-500">No donors found.</td></tr>}
+                                                {data.donors.length === 0 && <tr><td colSpan={7} className="p-4 text-center text-gray-500">No donors found.</td></tr>}
                                                 {data.donors.map(d => (
                                                     <tr key={d.id} className="hover:bg-gray-50">
                                                         <td className="p-4 font-medium">{d.name}</td>
@@ -385,47 +385,49 @@ const AdminPanel: React.FC = () => {
                                             </tbody>
                                         </table>
                                     </div>
-                            )}
-
-                                    {activeTab === 'volunteers' && (
-                                        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-                                            <div className="p-6 border-b"><h3 className="text-xl font-bold">Team Signups</h3></div>
-                                            <div className="overflow-x-auto">
-                                                <table className="w-full text-left min-w-[800px]">
-                                                    <thead className="bg-gray-50 text-xs uppercase text-gray-500 font-bold">
-                                                        <tr>
-                                                            <th className="p-4">Name</th>
-                                                            <th className="p-4">Email</th>
-                                                            <th className="p-4">Phone</th>
-                                                            <th className="p-4">Occupation</th>
-                                                            <th className="p-4">Location</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody className="divide-y">
-                                                        {data.volunteers.length === 0 && <tr><td colSpan={5} className="p-4 text-center text-gray-500">No volunteers found.</td></tr>}
-                                                        {data.volunteers.map(v => (
-                                                            <tr key={v.id} className="hover:bg-gray-50">
-                                                                <td className="p-4 font-medium">{v.name}</td>
-                                                                <td className="p-4 text-blue-600 underline text-sm">{v.email}</td>
-                                                                <td className="p-4 text-sm">{v.phone}</td>
-                                                                <td className="p-4 text-sm">{v.occupation}</td>
-                                                                <td className="p-4 text-gray-500">{v.location}</td>
-                                                            </tr>
-                                                        ))}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                            )}
-                                        </div>
-                                    )}
-
-                                    {activeTab === 'projects' && (
-                                        <ProjectManager />
-                                    )}
                                 </div>
+                            )}
+
+                            {activeTab === 'volunteers' && (
+                                <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                                    <div className="p-6 border-b"><h3 className="text-xl font-bold">Team Signups</h3></div>
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-left min-w-[800px]">
+                                            <thead className="bg-gray-50 text-xs uppercase text-gray-500 font-bold">
+                                                <tr>
+                                                    <th className="p-4">Name</th>
+                                                    <th className="p-4">Email</th>
+                                                    <th className="p-4">Phone</th>
+                                                    <th className="p-4">Occupation</th>
+                                                    <th className="p-4">Location</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y">
+                                                {data.volunteers.length === 0 && <tr><td colSpan={5} className="p-4 text-center text-gray-500">No volunteers found.</td></tr>}
+                                                {data.volunteers.map(v => (
+                                                    <tr key={v.id} className="hover:bg-gray-50">
+                                                        <td className="p-4 font-medium">{v.name}</td>
+                                                        <td className="p-4 text-blue-600 underline text-sm">{v.email}</td>
+                                                        <td className="p-4 text-sm">{v.phone}</td>
+                                                        <td className="p-4 text-sm">{v.occupation}</td>
+                                                        <td className="p-4 text-gray-500">{v.location}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'projects' && (
+                                <ProjectManager />
+                            )}
+                        </div>
+                    )}
+                </div>
             </main>
         </div >
-                );
+    );
 };
 
-                export default AdminPanel;
+export default AdminPanel;
