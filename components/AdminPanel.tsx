@@ -104,10 +104,28 @@ const AdminPanel: React.FC = () => {
     // Optimization: Render sidebar immediately
     // if (isLoading) return <div className="p-10">Loading Data...</div>;
 
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
     return (
-        <div className="flex h-screen bg-gray-50 font-sans text-gray-900">
+        <div className="flex h-screen bg-gray-50 font-sans text-gray-900 relative">
+            {/* Mobile Header */}
+            <div className="md:hidden fixed top-0 w-full bg-green-900 text-white z-40 px-4 h-16 flex items-center justify-between shadow-md">
+                <span className="font-bold">Digital Islam Admin</span>
+                <button onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
+                </button>
+            </div>
+
+            {/* Sidebar Overlay */}
+            {isSidebarOpen && (
+                <div
+                    className="fixed inset-0 bg-black/50 z-30 md:hidden"
+                    onClick={() => setIsSidebarOpen(false)}
+                />
+            )}
+
             {/* Sidebar */}
-            <aside className="w-72 bg-green-900 text-white flex flex-col shadow-2xl z-20 transition-all duration-300">
+            <aside className={`fixed inset-y-0 left-0 z-40 w-72 bg-green-900 text-white flex flex-col shadow-2xl transition-transform duration-300 md:relative md:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 <div className="h-24 flex items-center px-8 border-b border-green-800 gap-4 mb-6">
                     <img src="/logo.jpg" alt="Logo" className="h-10 w-10 rounded-full border-2 border-green-400 shadow-sm" />
                     <div>
@@ -120,7 +138,7 @@ const AdminPanel: React.FC = () => {
                     <div className="text-xs font-bold text-green-400 uppercase tracking-widest px-4 mb-2 mt-2">Main Menu</div>
 
                     <button
-                        onClick={() => setActiveTab('content')}
+                        onClick={() => { setActiveTab('content'); setIsSidebarOpen(false); }}
                         className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all duration-200 group ${activeTab === 'content' ? 'bg-green-700 text-white shadow-lg translate-x-1 font-semibold' : 'text-green-100 hover:bg-green-800 hover:text-white'}`}
                     >
                         <svg className={`w-6 h-6 ${activeTab === 'content' ? 'text-green-300' : 'text-green-400 group-hover:text-white'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
@@ -128,7 +146,7 @@ const AdminPanel: React.FC = () => {
                     </button>
 
                     <button
-                        onClick={() => setActiveTab('gallery')}
+                        onClick={() => { setActiveTab('gallery'); setIsSidebarOpen(false); }}
                         className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all duration-200 group ${activeTab === 'gallery' ? 'bg-green-700 text-white shadow-lg translate-x-1 font-semibold' : 'text-green-100 hover:bg-green-800 hover:text-white'}`}
                     >
                         <svg className={`w-6 h-6 ${activeTab === 'gallery' ? 'text-green-300' : 'text-green-400 group-hover:text-white'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
@@ -136,7 +154,7 @@ const AdminPanel: React.FC = () => {
                     </button>
 
                     <button
-                        onClick={() => setActiveTab('projects')}
+                        onClick={() => { setActiveTab('projects'); setIsSidebarOpen(false); }}
                         className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all duration-200 group ${activeTab === 'projects' ? 'bg-green-700 text-white shadow-lg translate-x-1 font-semibold' : 'text-green-100 hover:bg-green-800 hover:text-white'}`}
                     >
                         <svg className={`w-6 h-6 ${activeTab === 'projects' ? 'text-green-300' : 'text-green-400 group-hover:text-white'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
@@ -144,7 +162,7 @@ const AdminPanel: React.FC = () => {
                     </button>
 
                     <button
-                        onClick={() => setActiveTab('donors')}
+                        onClick={() => { setActiveTab('donors'); setIsSidebarOpen(false); }}
                         className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all duration-200 group ${activeTab === 'donors' ? 'bg-green-700 text-white shadow-lg translate-x-1 font-semibold' : 'text-green-100 hover:bg-green-800 hover:text-white'}`}
                     >
                         <svg className={`w-6 h-6 ${activeTab === 'donors' ? 'text-green-300' : 'text-green-400 group-hover:text-white'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -152,7 +170,7 @@ const AdminPanel: React.FC = () => {
                     </button>
 
                     <button
-                        onClick={() => setActiveTab('volunteers')}
+                        onClick={() => { setActiveTab('volunteers'); setIsSidebarOpen(false); }}
                         className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all duration-200 group ${activeTab === 'volunteers' ? 'bg-green-700 text-white shadow-lg translate-x-1 font-semibold' : 'text-green-100 hover:bg-green-800 hover:text-white'}`}
                     >
                         <svg className={`w-6 h-6 ${activeTab === 'volunteers' ? 'text-green-300' : 'text-green-400 group-hover:text-white'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
@@ -169,12 +187,12 @@ const AdminPanel: React.FC = () => {
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 overflow-y-auto bg-gray-50">
+            <main className="flex-1 overflow-y-auto bg-gray-50 pt-16 md:pt-0">
                 {/* Header */}
-                <header className="bg-white h-24 border-b border-gray-100 flex items-center justify-between px-10 sticky top-0 z-10 shadow-sm/50 backdrop-blur-sm bg-white/90">
+                <header className="bg-white h-24 border-b border-gray-100 flex items-center justify-between px-4 md:px-10 sticky top-0 z-10 shadow-sm/50 backdrop-blur-sm bg-white/90">
                     <div>
-                        <h1 className="text-3xl font-bold text-gray-900 capitalize tracking-tight">{activeTab} Management</h1>
-                        <p className="text-gray-500 text-sm mt-1">Manage and oversee your application's {activeTab}.</p>
+                        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 capitalize tracking-tight">{activeTab} Management</h1>
+                        <p className="text-gray-500 text-sm mt-1 hidden md:block">Manage and oversee your application's {activeTab}.</p>
                     </div>
                     <div className="flex items-center gap-4">
                         <div className="h-10 w-10 bg-green-50 rounded-full flex items-center justify-center text-green-700 font-bold border border-green-100">
@@ -183,7 +201,7 @@ const AdminPanel: React.FC = () => {
                     </div>
                 </header>
 
-                <div className="p-10 max-w-7xl mx-auto pb-24">
+                <div className="p-4 md:p-10 max-w-7xl mx-auto pb-24">
                     {isLoading ? (
                         <div className="flex flex-col items-center justify-center h-96">
                             <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-200 border-t-green-700 mb-4"></div>
@@ -404,7 +422,7 @@ const AdminPanel: React.FC = () => {
                     )}
                 </div>
             </main>
-        </div>
+        </div >
     );
 };
 
