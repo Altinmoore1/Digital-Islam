@@ -6,6 +6,7 @@ import { signOut } from 'firebase/auth';
 const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const location = useLocation();
     const navigate = useNavigate();
+    const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
 
     const handleLogout = async () => {
         try {
@@ -22,9 +23,25 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     ];
 
     return (
-        <div className="flex min-h-screen bg-gray-100">
+        <div className="flex min-h-screen bg-gray-100 relative">
+            {/* Mobile Header */}
+            <div className="md:hidden fixed top-0 w-full bg-green-900 text-white z-40 px-4 h-16 flex items-center justify-between shadow-md">
+                <span className="font-bold">Digital Islam</span>
+                <button onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
+                </button>
+            </div>
+
+            {/* Sidebar Overlay */}
+            {isSidebarOpen && (
+                <div
+                    className="fixed inset-0 bg-black/50 z-30 md:hidden"
+                    onClick={() => setIsSidebarOpen(false)}
+                />
+            )}
+
             {/* Sidebar */}
-            <aside className="w-64 bg-green-900 text-white shadow-xl flex flex-col">
+            <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-green-900 text-white shadow-xl flex flex-col transform transition-transform duration-300 md:relative md:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 <div className="p-6">
                     <h2 className="text-2xl font-bold italic">Digital Islam</h2>
                     <div className="text-green-300 text-xs tracking-wider uppercase mt-1">Admin Portal</div>
@@ -36,8 +53,8 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                             key={item.path}
                             to={item.path}
                             className={`block px-6 py-4 text-sm font-medium transition-colors ${location.pathname === item.path
-                                    ? 'bg-green-800 border-r-4 border-green-400'
-                                    : 'text-green-100 hover:bg-green-800/50'
+                                ? 'bg-green-800 border-r-4 border-green-400'
+                                : 'text-green-100 hover:bg-green-800/50'
                                 }`}
                         >
                             {item.label}
@@ -65,7 +82,8 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 p-8 overflow-y-auto h-screen">
+            {/* Main Content */}
+            <main className="flex-1 p-4 md:p-8 overflow-y-auto h-screen pt-20 md:pt-8">
                 {children}
             </main>
         </div>
