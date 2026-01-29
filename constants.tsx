@@ -76,3 +76,7 @@ export const BANK_ACCOUNTS: BankAccount[] = [
 
 export const CONTACT_EMAIL = 'digitalislamsl@gmail.com';
 export const CONTACT_PHONES = ['+232 079 447 730', '+232 030 135 412'];
+
+// Ramadan 2026 Dates (Estimated)
+export const RAMADAN_START_DATE = new Date('2026-02-18T00:00:00');
+export const RAMADAN_END_DATE = new Date('2026-03-19T00:00:00');

@@ -33,3 +33,12 @@ export interface Project {
   raised?: string; // keeping as string for flexibility
   date?: string;
 }
+
+
+export interface CarouselItem {
+  id: string; // Firestore ID
+  title: string;
+  detail: string;
+  mediaUrl: string;
+  mediaType: 'image' | 'video';
+}

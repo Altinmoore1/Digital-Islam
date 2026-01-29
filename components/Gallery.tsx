@@ -70,24 +70,28 @@ const Gallery: React.FC<{ limit?: number }> = ({ limit }) => {
               onClick={() => setSelectedMedia(item)}
             >
               {item.type === 'video' ? (
-                <video
-                  src={item.url}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  muted
-                  playsInline
-                  preload="metadata"
-                  onMouseOver={e => e.currentTarget.play()}
-                  onMouseOut={e => {
-                    e.currentTarget.pause();
-                    e.currentTarget.currentTime = 0; // Reset to frame 1
-                  }}
-                />
+                item.url ? (
+                  <video
+                    src={item.url}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    muted
+                    playsInline
+                    preload="metadata"
+                    onMouseOver={e => e.currentTarget.play()}
+                    onMouseOut={e => {
+                      e.currentTarget.pause();
+                      e.currentTarget.currentTime = 0; // Reset to frame 1
+                    }}
+                  />
+                ) : <div className="w-full h-full bg-gray-200 flex items-center justify-center">No Video</div>
               ) : (
-                <img
-                  src={item.thumbnail}
-                  alt={item.title}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
+                item.thumbnail ? (
+                  <img
+                    src={item.thumbnail}
+                    alt={item.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                ) : <div className="w-full h-full bg-gray-200 flex items-center justify-center">No Image</div>
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
                 <span className="text-green-400 text-xs font-bold uppercase tracking-widest mb-1">{item.category}</span>

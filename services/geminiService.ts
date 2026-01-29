@@ -4,6 +4,10 @@ import { GoogleGenAI } from "@google/genai";
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
 
 export const getInspiration = async (topic: string = "gratitude") => {
+  if (!process.env.API_KEY) {
+    console.warn("Gemini API Key is missing. Returning fallback.");
+    return "The best of people are those who are most beneficial to people. (Prophetic Wisdom)";
+  }
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
@@ -21,6 +25,9 @@ export const getInspiration = async (topic: string = "gratitude") => {
 };
 
 export const askQuestions = async (question: string) => {
+  if (!process.env.API_KEY) {
+    return "I'm sorry, I'm unable to answer that right now. Please consult a local scholar or reach out to our education department.";
+  }
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',

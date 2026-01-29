@@ -183,6 +183,7 @@ export const deleteProject = async (id: string) => {
     }
 };
 
+
 export const seedProjects = async () => {
     const initialProjects = [
         {
@@ -220,5 +221,49 @@ export const seedProjects = async () => {
     } catch (e) {
         console.error("Error seeding projects:", e);
         return false;
+    }
+};
+
+// --- Hero Carousel CRUD ---
+
+export const getHeroCarousel = async () => {
+    try {
+        const querySnapshot = await getDocs(collection(db, 'hero_carousel'));
+        return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } catch (error) {
+        console.error("Error fetching hero carousel:", error);
+        return [];
+    }
+};
+
+export const addHeroCarouselItem = async (data: any) => {
+    try {
+        const docRef = await addDoc(collection(db, 'hero_carousel'), data);
+        console.log("Hero Carousel item written with ID: ", docRef.id);
+        return docRef.id;
+    } catch (e) {
+        console.error("Error adding hero carousel item: ", e);
+        throw e;
+    }
+};
+
+export const updateHeroCarouselItem = async (id: string, data: any) => {
+    try {
+        const docRef = doc(db, 'hero_carousel', id);
+        await updateDoc(docRef, data);
+        console.log("Hero Carousel item updated with ID: ", id);
+    } catch (e) {
+        console.error("Error updating hero carousel item: ", e);
+        throw e;
+    }
+};
+
+export const deleteHeroCarouselItem = async (id: string) => {
+    try {
+        await deleteDoc(doc(db, 'hero_carousel', id));
+        console.log("Hero Carousel item deleted with ID: ", id);
+    } catch (e) {
+        console.error("Error deleting hero carousel item: ", e);
+        throw e;
     }
 };

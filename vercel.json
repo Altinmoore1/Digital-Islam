@@ -1,6 +1,10 @@
 {
     "rewrites": [
         {
+            "source": "/api/monime/(.*)",
+            "destination": "https://api.monime.io/v1/$1"
+        },
+        {
             "source": "/(.*)",
             "destination": "/index.html"
         }

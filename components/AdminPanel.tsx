@@ -4,8 +4,12 @@ import { uploadMedia, uploadGalleryMedia } from '../services/contentService';
 import ProjectManager from './admin/ProjectManager';
 
 const AdminPanel: React.FC = () => {
-    const { data, updateHero, addGalleryItem, removeGalleryItem, updateSector, setIsAdmin, isLoading } = useAppData();
-    const [activeTab, setActiveTab] = useState<'content' | 'gallery' | 'donors' | 'volunteers' | 'projects'>('content');
+    const { data, updateHero, addGalleryItem, removeGalleryItem, updateSector, setIsAdmin, isLoading, addCarouselItem, deleteCarouselItem } = useAppData();
+    const [activeTab, setActiveTab] = useState<'content' | 'gallery' | 'carousel' | 'donors' | 'volunteers' | 'projects'>('content');
+
+    // Carousel State
+    const [newCarouselItem, setNewCarouselItem] = useState({ title: '', detail: '' });
+    const [carouselFile, setCarouselFile] = useState<File | null>(null);
 
     // We initialize state from data, but data might be empty initially if loading. 
     // We initialize state from data, but data might be empty initially if loading. 
@@ -101,6 +105,41 @@ const AdminPanel: React.FC = () => {
         }
     };
 
+    const handleCarouselSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (data.heroCarousel.length >= 5) {
+            alert("Maximum 5 items allowed in the carousel.");
+            return;
+        }
+
+        if (!carouselFile) {
+            alert("Please select an image or video.");
+            return;
+        }
+
+        try {
+            setIsUploading(true);
+            const downloadUrl = await uploadMedia(carouselFile);
+            const type = carouselFile.type.startsWith('video') ? 'video' : 'image';
+
+            await addCarouselItem({
+                title: newCarouselItem.title,
+                detail: newCarouselItem.detail,
+                mediaUrl: downloadUrl,
+                mediaType: type
+            });
+
+            alert("Carousel item added!");
+            setNewCarouselItem({ title: '', detail: '' });
+            setCarouselFile(null);
+        } catch (error) {
+            console.error(error);
+            alert("Failed to add carousel item.");
+        } finally {
+            setIsUploading(false);
+        }
+    };
+
     // Optimization: Render sidebar immediately
     // if (isLoading) return <div className="p-10">Loading Data...</div>;
 
@@ -143,6 +182,14 @@ const AdminPanel: React.FC = () => {
                     >
                         <svg className={`w-6 h-6 ${activeTab === 'content' ? 'text-green-300' : 'text-green-400 group-hover:text-white'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
                         Content Manager
+                    </button>
+
+                    <button
+                        onClick={() => { setActiveTab('carousel'); setIsSidebarOpen(false); }}
+                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all duration-200 group ${activeTab === 'carousel' ? 'bg-green-700 text-white shadow-lg translate-x-1 font-semibold' : 'text-green-100 hover:bg-green-800 hover:text-white'}`}
+                    >
+                        <svg className={`w-6 h-6 ${activeTab === 'carousel' ? 'text-green-300' : 'text-green-400 group-hover:text-white'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                        Hero Carousel
                     </button>
 
                     <button
@@ -281,6 +328,103 @@ const AdminPanel: React.FC = () => {
                                                 )}
                                             </div>
                                         </form>
+
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'carousel' && (
+                                <div className="space-y-8">
+                                    <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-200">
+                                        <h3 className="text-2xl font-bold mb-6 text-green-900">Add Carousel Item</h3>
+                                        <p className="text-sm text-gray-500 mb-6">Add up to 5 items to the hero carousel.</p>
+
+                                        {data.heroCarousel.length >= 5 ? (
+                                            <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 p-4 rounded-lg mb-6">
+                                                Maximum limit of 5 carousel items reached. Delete an item to add a new one.
+                                            </div>
+                                        ) : (
+                                            <form onSubmit={handleCarouselSubmit} className="space-y-4">
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                    <input
+                                                        placeholder="Item Title"
+                                                        className="p-3 border rounded-lg col-span-1 md:col-span-2"
+                                                        value={newCarouselItem.title}
+                                                        onChange={e => setNewCarouselItem({ ...newCarouselItem, title: e.target.value })}
+                                                        required
+                                                    />
+                                                    <input
+                                                        placeholder="Short Detail"
+                                                        className="p-3 border rounded-lg col-span-1 md:col-span-2"
+                                                        value={newCarouselItem.detail}
+                                                        onChange={e => setNewCarouselItem({ ...newCarouselItem, detail: e.target.value })}
+                                                        required
+                                                    />
+
+                                                    <div className="col-span-1 md:col-span-2">
+                                                        <label className="block text-sm font-bold mb-1 text-gray-700">Media (Image/Video)</label>
+                                                        <input
+                                                            type="file"
+                                                            accept="image/*,video/*"
+                                                            className="w-full p-2 border rounded-lg bg-white"
+                                                            onChange={(e) => {
+                                                                if (e.target.files && e.target.files[0]) {
+                                                                    setCarouselFile(e.target.files[0]);
+                                                                }
+                                                            }}
+                                                            required
+                                                        />
+                                                    </div>
+
+                                                    <button
+                                                        disabled={isUploading}
+                                                        className="col-span-1 md:col-span-2 bg-green-700 text-white py-3 rounded-lg font-bold hover:bg-green-800 disabled:opacity-50"
+                                                    >
+                                                        {isUploading ? 'Uploading & Adding...' : 'Add to Carousel'}
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        )}
+                                    </div>
+
+                                    <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-200">
+                                        <h3 className="text-xl font-bold mb-4">Current Carousel Items</h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                            {data.heroCarousel.map(item => (
+                                                <div key={item.id} className="relative group rounded-xl overflow-hidden border bg-gray-50 flex flex-col">
+                                                    <div className="relative h-48">
+                                                        {item.mediaType === 'video' ? (
+                                                            <video
+                                                                src={item.mediaUrl}
+                                                                className="w-full h-full object-cover"
+                                                                muted
+                                                                onMouseOver={e => e.currentTarget.play()}
+                                                                onMouseOut={e => {
+                                                                    e.currentTarget.pause();
+                                                                    e.currentTarget.currentTime = 0;
+                                                                }}
+                                                            />
+                                                        ) : (
+                                                            <img src={item.mediaUrl} className="w-full h-full object-cover" alt={item.title} />
+                                                        )}
+                                                    </div>
+                                                    <div className="p-4 flex-1">
+                                                        <h4 className="font-bold text-gray-900">{item.title}</h4>
+                                                        <p className="text-sm text-gray-600 mt-1 line-clamp-2">{item.detail}</p>
+                                                    </div>
+                                                    <button
+                                                        onClick={() => deleteCarouselItem(item.id)}
+                                                        className="absolute top-2 right-2 bg-white text-red-600 hover:bg-red-600 hover:text-white p-2 rounded-full shadow-md transition-all z-10"
+                                                        title="Delete Item"
+                                                    >
+                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                                                    </button>
+                                                </div>
+                                            ))}
+                                            {data.heroCarousel.length === 0 && (
+                                                <p className="text-gray-500 italic col-span-3 text-center py-8">No carousel items yet.</p>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             )}

@@ -1,28 +1,14 @@
-
-import React, { useEffect, useState } from 'react';
-import { getLandingPageContent, LandingPageContent } from '../services/contentService';
+import React from 'react';
+import { useAppData } from '../context/DataContext';
+import HeroCarousel from './HeroCarousel';
 
 const Hero: React.FC = () => {
-  const [content, setContent] = useState<LandingPageContent | null>(null);
+  const { data } = useAppData();
 
-  useEffect(() => {
-    const fetchContent = async () => {
-      const data = await getLandingPageContent();
-      if (data) {
-        setContent(data);
-      }
-    };
-    fetchContent();
-  }, []);
-
-  // Default values if no content is found or while loading (optional: you could show a skeleton)
-  // Default values if no content is found or while loading (optional: you could show a skeleton)
-  const title = content?.heroTitle || "Edutainment Through";
-  const subtitle = content?.heroSubtitle || "Divine Inspiration";
-  const description = content?.heroDescription || "Digital Islam is a faith-based digital platform dedicated to educating, inspiring, and uplifting communities through Islamic knowledge, charity, and creative engagement. We promote social responsibility and spiritual growth.";
-  // Remove default placeholder to avoid flicker. Only show if content is loaded or use a transparent/loading state.
-  const mediaUrl = content?.heroMediaUrl || "";
-  const mediaType = content?.heroMediaType || 'image';
+  // Use data from context, with fallbacks
+  const title = data.hero.title || "Edutainment Through";
+  const subtitle = data.hero.subtitle || "Divine Inspiration";
+  const description = data.hero.description || "Digital Islam is a faith-based digital platform dedicated to educating, inspiring, and uplifting communities through Islamic knowledge, charity, and creative engagement. We promote social responsibility and spiritual growth.";
 
   return (
     <section id="home" className="relative pt-32 pb-20 overflow-hidden">
@@ -61,29 +47,16 @@ const Hero: React.FC = () => {
             </div>
           </div>
 
-          <div className="relative">
+          <div className="relative h-[400px] lg:h-[500px]">
             <div className="absolute inset-0 bg-secondary/20 rounded-full blur-3xl opacity-20 -z-10 translate-x-1/4"></div>
-            <div className="rounded-2xl overflow-hidden shadow-2xl transform rotate-1 hover:rotate-0 transition-transform duration-500 border-8 border-white">
-              {mediaType === 'video' ? (
-                <video
-                  src={mediaUrl}
-                  controls
-                  className="w-full h-auto object-cover aspect-video lg:aspect-square"
-                />
-              ) : (
-                <img
-                  src={mediaUrl}
-                  alt="Community Gathering"
-                  className="w-full h-auto object-cover aspect-video lg:aspect-square"
-                />
-              )}
-            </div>
+            <HeroCarousel items={data.heroCarousel} />
+
             {/* Decorative floaters */}
-            <div className="absolute -bottom-6 -left-6 bg-white p-4 rounded-xl shadow-lg border border-sky-100 hidden md:block animate-bounce" style={{ animationDuration: '3s' }}>
+            <div className="absolute -bottom-6 -left-6 bg-white p-4 rounded-xl shadow-lg border border-sky-100 hidden md:block animate-bounce z-20" style={{ animationDuration: '3s' }}>
               <p className="text-secondary font-bold text-sm">Feeding Families</p>
               <p className="text-xs text-gray-500">Ramadan Project 2024</p>
             </div>
-            <div className="absolute -top-6 -right-6 bg-secondary text-white p-4 rounded-xl shadow-lg hidden md:block animate-bounce" style={{ animationDuration: '4s' }}>
+            <div className="absolute -top-6 -right-6 bg-secondary text-white p-4 rounded-xl shadow-lg hidden md:block animate-bounce z-20" style={{ animationDuration: '4s' }}>
               <p className="font-bold text-sm">Empowering Youth</p>
               <p className="text-xs text-sky-100">100+ Ambassadors</p>
             </div>

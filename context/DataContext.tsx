@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getLandingPageContent, updateLandingPageContent, getVolunteers, getDonors, getGallery, addGalleryItem as addGalleryItemService, deleteGalleryItem as deleteGalleryItemService, getProjects, addProject as addProjectService, updateProject as updateProjectService, deleteProject as deleteProjectService, seedProjects as seedProjectsService } from '../services/contentService';
-import { Project } from '../types';
+import { getLandingPageContent, updateLandingPageContent, getVolunteers, getDonors, getGallery, addGalleryItem as addGalleryItemService, deleteGalleryItem as deleteGalleryItemService, getProjects, addProject as addProjectService, updateProject as updateProjectService, deleteProject as deleteProjectService, seedProjects as seedProjectsService, getHeroCarousel, addHeroCarouselItem as addCarouselItemService, deleteHeroCarouselItem as deleteCarouselItemService, updateHeroCarouselItem as updateCarouselItemService } from '../services/contentService';
+import { Project, CarouselItem } from '../types';
 
 // Types based on the Admin Panel usage
 interface HeroData {
@@ -45,6 +45,7 @@ interface AppData {
     donations: Donor[];
     volunteers: Volunteer[];
     projects: Project[];
+    heroCarousel: CarouselItem[];
 }
 
 interface DataContextType {
@@ -58,6 +59,9 @@ interface DataContextType {
     updateProject: (id: string, project: Partial<Project>) => Promise<void>;
     deleteProject: (id: string) => Promise<void>;
     seedProjects: () => Promise<void>;
+    addCarouselItem: (item: Omit<CarouselItem, 'id'>) => Promise<void>;
+    deleteCarouselItem: (id: string) => Promise<void>;
+    updateCarouselItem: (id: string, data: Partial<CarouselItem>) => Promise<void>;
     isLoading: boolean;
 }
 
@@ -80,7 +84,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         volunteers: [
             { id: '1', name: 'Mike Ross', email: 'mike@example.com', phone: '123-456-7890', occupation: 'Lawyer', location: 'New York' },
         ],
-        projects: []
+        projects: [],
+        heroCarousel: []
     });
 
     const [isLoading, setIsLoading] = useState(false);
@@ -90,11 +95,12 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const fetchData = async () => {
             setIsLoading(true);
             try {
-                const [volunteersData, donorsData, galleryData, projectsData] = await Promise.all([
+                const [volunteersData, donorsData, galleryData, projectsData, carouselData] = await Promise.all([
                     getVolunteers(),
                     getDonors(),
                     getGallery(),
-                    getProjects()
+                    getProjects(),
+                    getHeroCarousel()
                 ]);
 
                 setData(prev => ({
@@ -102,7 +108,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
                     volunteers: volunteersData as Volunteer[],
                     donors: donorsData as Donor[],
                     gallery: galleryData as GalleryItem[],
-                    projects: projectsData as Project[]
+                    projects: projectsData as Project[],
+                    heroCarousel: carouselData as CarouselItem[]
                 }));
             } catch (error) {
                 console.error("Failed to fetch admin data", error);
@@ -208,6 +215,45 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
+    const addCarouselItem = async (item: Omit<CarouselItem, 'id'>) => {
+        try {
+            const id = await addCarouselItemService(item);
+            setData(prev => ({
+                ...prev,
+                heroCarousel: [...prev.heroCarousel, { ...item, id }]
+            }));
+        } catch (e) {
+            console.error("Failed to add carousel item", e);
+            throw e;
+        }
+    };
+
+    const deleteCarouselItem = async (id: string) => {
+        try {
+            await deleteCarouselItemService(id);
+            setData(prev => ({
+                ...prev,
+                heroCarousel: prev.heroCarousel.filter(item => item.id !== id)
+            }));
+        } catch (e) {
+            console.error("Failed to delete carousel item", e);
+            throw e;
+        }
+    };
+
+    const updateCarouselItem = async (id: string, data: Partial<CarouselItem>) => {
+        try {
+            await updateCarouselItemService(id, data);
+            setData(prev => ({
+                ...prev,
+                heroCarousel: prev.heroCarousel.map(item => item.id === id ? { ...item, ...data } : item)
+            }));
+        } catch (e) {
+            console.error("Failed to update carousel item", e);
+            throw e;
+        }
+    };
+
     const updateSector = (id: number, sectorData: any) => {
         console.log("Update sector", id, sectorData);
     };
@@ -231,7 +277,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             addProject,
             updateProject,
             deleteProject,
-            seedProjects
+            seedProjects,
+            addCarouselItem,
+            deleteCarouselItem,
+            updateCarouselItem
         }}>
             {children}
         </DataContext.Provider>

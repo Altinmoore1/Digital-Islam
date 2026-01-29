@@ -1,6 +1,6 @@
-
 import React, { useState } from 'react';
 import { addVolunteer, addDonor } from '../services/contentService';
+import { createCheckoutSession } from '../services/monimeService';
 import { useAppData } from '../context/DataContext';
 
 const GetInvolved: React.FC = () => {
@@ -11,6 +11,7 @@ const GetInvolved: React.FC = () => {
 
   const [volunteerData, setVolunteerData] = useState({ name: '', email: '', phone: '', occupation: '', location: '' });
   const [donorData, setDonorData] = useState({ name: '', email: '', phone: '', occupation: '', location: '', project: 'General Support', pledge: '' });
+
 
   const handleVolunteerSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,14 +30,36 @@ const GetInvolved: React.FC = () => {
 
   const handleDonorSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     setIsSubmitting(true);
     try {
-      await addDonor(donorData);
-      alert("Thank you for your pledge! We will contact you with payment details.");
-      setShowDonorForm(false);
-      setDonorData({ name: '', email: '', phone: '', occupation: '', location: '', project: 'General Support', pledge: '' });
-    } catch (e) {
-      alert("Error submitting form. Please try again.");
+      // Monime Checkout Integration
+      const amount = parseFloat(donorData.pledge.replace(/[^0-9.]/g, ''));
+
+      if (isNaN(amount) || amount <= 0) {
+        alert("Please enter a valid amount (e.g., 50)");
+        setIsSubmitting(false);
+        return;
+      }
+
+      await addDonor(donorData); // Keep record in Firebase (optional)
+
+      const session = await createCheckoutSession(amount, {
+        name: donorData.name,
+        email: donorData.email,
+        phone: donorData.phone,
+        project: donorData.project
+      });
+
+      if (session && session.redirectUrl) {
+        window.location.href = session.redirectUrl;
+      } else {
+        alert("Failed to initialize payment. Please try again.");
+      }
+
+    } catch (e: any) {
+      console.error("Submission Error", e);
+      alert(`Error processing your request: ${e.message || "Unknown error"}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -68,11 +91,14 @@ const GetInvolved: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="bg-white rounded-2xl p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto relative">
             <button onClick={() => setShowDonorForm(false)} className="absolute top-4 right-4 text-2xl font-bold text-gray-400 hover:text-gray-600">&times;</button>
-            <h2 className="text-2xl font-bold text-green-900 mb-6">Make a Pledge</h2>
+            <h2 className="text-2xl font-bold text-green-900 mb-6">Make a Donation</h2>
+            <p className="text-gray-600 mb-4 text-sm">Fill out the form below to proceed to payment.</p>
+
             <form onSubmit={handleDonorSubmit} className="space-y-4">
               <input placeholder="Full Name" required className="w-full p-3 border rounded-lg" value={donorData.name} onChange={e => setDonorData({ ...donorData, name: e.target.value })} />
               <input placeholder="Email Address" type="email" required className="w-full p-3 border rounded-lg" value={donorData.email} onChange={e => setDonorData({ ...donorData, email: e.target.value })} />
               <input placeholder="Phone Number" type="tel" required className="w-full p-3 border rounded-lg" value={donorData.phone} onChange={e => setDonorData({ ...donorData, phone: e.target.value })} />
+
               <input placeholder="Occupation" required className="w-full p-3 border rounded-lg" value={donorData.occupation} onChange={e => setDonorData({ ...donorData, occupation: e.target.value })} />
               <input placeholder="Location (City, Country)" required className="w-full p-3 border rounded-lg" value={donorData.location} onChange={e => setDonorData({ ...donorData, location: e.target.value })} />
 
@@ -91,11 +117,19 @@ const GetInvolved: React.FC = () => {
               </div>
 
               <div className="border-t pt-2 mt-2">
-                <label className="block text-sm font-bold text-gray-700 mb-2">Pledge Amount / Details</label>
-                <textarea placeholder="I would like to donate SLE 50..." required className="w-full p-3 border rounded-lg h-24" value={donorData.pledge} onChange={e => setDonorData({ ...donorData, pledge: e.target.value })} />
+                <label className="block text-sm font-bold text-gray-700 mb-2">Donation Amount (SLE)</label>
+                <input
+                  type="number"
+                  min="1"
+                  placeholder="e.g., 50"
+                  required
+                  className="w-full p-3 border rounded-lg font-bold text-lg"
+                  value={donorData.pledge}
+                  onChange={e => setDonorData({ ...donorData, pledge: e.target.value })}
+                />
               </div>
               <button disabled={isSubmitting} className="w-full bg-green-700 text-white py-3 rounded-lg font-bold hover:bg-green-800 disabled:opacity-50">
-                {isSubmitting ? 'Submitting...' : 'Submit Pledge'}
+                {isSubmitting ? 'Processing...' : 'Proceed to Payment (Monime)'}
               </button>
             </form>
           </div>
@@ -157,7 +191,7 @@ const GetInvolved: React.FC = () => {
               onClick={() => setShowDonorForm(true)}
               className="w-full bg-white border-2 border-green-700 text-green-700 py-4 rounded-xl font-bold text-lg hover:bg-green-50 transition-all text-center shadow-md mb-2"
             >
-              Pledge a Donation
+              Make a Pledge
             </button>
             <a
               href="#contact"
@@ -168,7 +202,7 @@ const GetInvolved: React.FC = () => {
           </div>
         </div>
       </div>
-    </section>
+    </section >
   );
 };
 

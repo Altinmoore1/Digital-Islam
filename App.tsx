@@ -3,6 +3,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
+import RamadanCounter from './components/RamadanCounter';
 import Reflections from './components/Reflections';
 import About from './components/About';
 import Sectors from './components/Sectors';
@@ -22,6 +23,7 @@ const LandingPage: React.FC = () => (
     <Navbar />
     <main>
       <Hero />
+      <RamadanCounter />
       <Reflections />
       <About />
       <Sectors />
