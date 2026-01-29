@@ -129,7 +129,7 @@ const GetInvolved: React.FC = () => {
                 />
               </div>
               <button disabled={isSubmitting} className="w-full bg-green-700 text-white py-3 rounded-lg font-bold hover:bg-green-800 disabled:opacity-50">
-                {isSubmitting ? 'Processing...' : 'Proceed to Payment (Monime)'}
+                {isSubmitting ? 'Processing...' : 'Proceed to Donate'}
               </button>
             </form>
           </div>
@@ -191,7 +191,7 @@ const GetInvolved: React.FC = () => {
               onClick={() => setShowDonorForm(true)}
               className="w-full bg-white border-2 border-green-700 text-green-700 py-4 rounded-xl font-bold text-lg hover:bg-green-50 transition-all text-center shadow-md mb-2"
             >
-              Make a Pledge
+              Donate Now
             </button>
             <a
               href="#contact"

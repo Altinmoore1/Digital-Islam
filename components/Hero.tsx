@@ -52,7 +52,7 @@ const Hero: React.FC = () => {
             <HeroCarousel items={data.heroCarousel} />
 
             {/* Decorative floaters */}
-            <div className="absolute -bottom-6 -left-6 bg-white p-4 rounded-xl shadow-lg border border-sky-100 hidden md:block animate-bounce z-20" style={{ animationDuration: '3s' }}>
+            <div className="absolute -top-6 -left-6 bg-white p-4 rounded-xl shadow-lg border border-sky-100 hidden md:block animate-bounce z-20" style={{ animationDuration: '3s' }}>
               <p className="text-secondary font-bold text-sm">Feeding Families</p>
               <p className="text-xs text-gray-500">Ramadan Project 2024</p>
             </div>
