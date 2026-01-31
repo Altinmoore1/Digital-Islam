@@ -17,12 +17,9 @@ const AdminPanel: React.FC = () => {
     const [heroForm, setHeroForm] = useState(data.hero);
 
     // Effect to update form when data loads (fixing empty form on refresh)
-    // DISABLED: Admin panel should NOT load data from landing page
-    /*
     React.useEffect(() => {
         if (data.hero) setHeroForm(data.hero);
     }, [data.hero]);
-    */
 
     const [newMedia, setNewMedia] = useState({ title: '', category: 'Charity' });
     const [selectedGalleryFiles, setSelectedGalleryFiles] = useState<FileList | null>(null);

@@ -46,7 +46,7 @@ export const SECTORS: Sector[] = [
     description: 'Our Youth Ambassador Program empowers young leaders to represent Digital Islam and promote positive Islamic values.',
     icon: '🌍',
     programs: [
-      'Active in 100+ Communities',
+      'Active in 200+ Communities',
       'Community Advocacy',
       'Leadership Development',
       'Youth Mentorship'

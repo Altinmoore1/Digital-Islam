@@ -117,7 +117,7 @@ const Navbar: React.FC = () => {
             <a
               href="#donate"
               // Just a simple anchor for now, logic likely in Get Involved
-              onClick={(e) => handleNavClick(e, 'get-involved')}
+              onClick={(e) => handleNavClick(e, 'donate')}
               className="bg-secondary text-white px-5 py-2 rounded-full font-semibold hover:bg-sky-500 transition-all shadow-md active:scale-95 text-sm lg:text-base cursor-pointer"
             >
               Donate Now
@@ -160,7 +160,7 @@ const Navbar: React.FC = () => {
             ))}
             <a
               href="#donate"
-              onClick={(e) => handleNavClick(e, 'get-involved')}
+              onClick={(e) => handleNavClick(e, 'donate')}
               className="block px-3 py-3 mt-4 text-center bg-secondary text-white font-bold rounded-lg cursor-pointer"
             >
               Donate Now

@@ -71,9 +71,9 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Initial Mock Data
     const [data, setData] = useState<AppData>({
         hero: {
-            title: '',
-            subtitle: '',
-            description: '',
+            title: 'Edutainment Through',
+            subtitle: 'Divine Inspiration',
+            description: 'Digital Islam is a faith-based digital platform dedicated to educating, inspiring, and uplifting communities through Islamic knowledge, charity, and creative engagement. We promote social responsibility and spiritual growth.',
             image: '',
         },
         gallery: [],
@@ -95,12 +95,13 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const fetchData = async () => {
             setIsLoading(true);
             try {
-                const [volunteersData, donorsData, galleryData, projectsData, carouselData] = await Promise.all([
+                const [volunteersData, donorsData, galleryData, projectsData, carouselData, heroData] = await Promise.all([
                     getVolunteers(),
                     getDonors(),
                     getGallery(),
                     getProjects(),
-                    getHeroCarousel()
+                    getHeroCarousel(),
+                    getLandingPageContent()
                 ]);
 
                 setData(prev => ({
@@ -109,7 +110,13 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
                     donors: donorsData as Donor[],
                     gallery: galleryData as GalleryItem[],
                     projects: projectsData as Project[],
-                    heroCarousel: carouselData as CarouselItem[]
+                    heroCarousel: carouselData as CarouselItem[],
+                    hero: heroData ? {
+                        title: heroData.heroTitle,
+                        subtitle: heroData.heroSubtitle,
+                        description: heroData.heroDescription,
+                        image: heroData.heroMediaUrl
+                    } : prev.hero
                 }));
             } catch (error) {
                 console.error("Failed to fetch admin data", error);

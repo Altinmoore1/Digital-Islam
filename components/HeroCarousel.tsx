@@ -32,7 +32,6 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ items }) => {
 
     return (
         <div className="relative w-full h-full overflow-hidden rounded-2xl shadow-2xl border-4 border-white group">
-
             {/* Slides */}
             {items.map((item, index) => (
                 <div

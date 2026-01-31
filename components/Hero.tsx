@@ -40,7 +40,7 @@ const Hero: React.FC = () => {
             <div className="mt-12 flex items-center gap-4 justify-center lg:justify-start text-sm text-gray-500 font-medium">
               <span className="flex items-center gap-1">
                 <span className="w-2 h-2 bg-secondary rounded-full animate-pulse"></span>
-                Active in 100+ Communities
+                Active in 200+ Communities
               </span>
               <span className="w-px h-4 bg-gray-300"></span>
               <span>Based in Sierra Leone</span>
