@@ -47,12 +47,25 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ items }) => {
                             loop
                             playsInline
                             className="w-full h-full object-cover"
+                            onError={(e) => {
+                                console.error('Video failed to load:', item.mediaUrl);
+                                console.error('Error details:', e);
+                            }}
                         />
                     ) : (
                         <img
                             src={item.mediaUrl}
                             alt={item.title}
                             className="w-full h-full object-cover"
+                            onError={(e) => {
+                                console.error('Image failed to load:', item.mediaUrl);
+                                console.error('Error details:', e);
+                                // Show a fallback placeholder
+                                (e.target as HTMLImageElement).src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="800" height="600"%3E%3Crect fill="%23ddd" width="800" height="600"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" text-anchor="middle" dy=".3em" font-family="sans-serif" font-size="24"%3EImage Failed to Load%3C/text%3E%3C/svg%3E';
+                            }}
+                            onLoad={() => {
+                                console.log('Image loaded successfully:', item.mediaUrl);
+                            }}
                         />
                     )}
 

@@ -408,6 +408,7 @@ const AdminPanel: React.FC = () => {
                                                     <div className="p-4 flex-1">
                                                         <h4 className="font-bold text-gray-900">{item.title}</h4>
                                                         <p className="text-sm text-gray-600 mt-1 line-clamp-2">{item.detail}</p>
+                                                        <p className="text-xs text-gray-400 mt-2 break-all">URL: {item.mediaUrl}</p>
                                                     </div>
                                                     <button
                                                         onClick={() => deleteCarouselItem(item.id)}
