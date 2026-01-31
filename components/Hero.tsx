@@ -3,7 +3,7 @@ import { useAppData } from '../context/DataContext';
 import HeroCarousel from './HeroCarousel';
 
 const Hero: React.FC = () => {
-  const { data } = useAppData();
+  const { data, isLoading } = useAppData();
 
   // Use data from context, with fallbacks
   const title = data.hero.title || "Edutainment Through";
@@ -49,7 +49,7 @@ const Hero: React.FC = () => {
 
           <div className="relative h-[400px] lg:h-[500px]">
             <div className="absolute inset-0 bg-secondary/20 rounded-full blur-3xl opacity-20 -z-10 translate-x-1/4"></div>
-            <HeroCarousel items={data.heroCarousel} />
+            <HeroCarousel items={data.heroCarousel} isLoading={isLoading} />
 
             {/* Decorative floaters */}
             <div className="absolute -top-6 -left-6 bg-white p-4 rounded-xl shadow-lg border border-sky-100 hidden md:block animate-bounce z-20" style={{ animationDuration: '3s' }}>

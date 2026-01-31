@@ -3,9 +3,10 @@ import { CarouselItem } from '../types';
 
 interface HeroCarouselProps {
     items: CarouselItem[];
+    isLoading?: boolean;
 }
 
-const HeroCarousel: React.FC<HeroCarouselProps> = ({ items }) => {
+const HeroCarousel: React.FC<HeroCarouselProps> = ({ items, isLoading = false }) => {
     const [activeIndex, setActiveIndex] = useState(0);
 
     // Auto-advance if there are multiple items
@@ -18,6 +19,16 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ items }) => {
 
         return () => clearInterval(interval);
     }, [items.length]);
+
+    // Show loading spinner while data is being fetched
+    if (isLoading) {
+        return (
+            <div className="w-full h-full bg-gradient-to-br from-green-50 to-sky-50 rounded-2xl flex flex-col items-center justify-center text-gray-600 shadow-2xl border-4 border-white">
+                <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-200 border-t-secondary mb-4"></div>
+                <p className="text-lg font-semibold">Loading carousel...</p>
+            </div>
+        );
+    }
 
     if (!items || items.length === 0) {
         return (
