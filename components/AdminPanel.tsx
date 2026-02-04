@@ -4,62 +4,20 @@ import { uploadMedia, uploadGalleryMedia } from '../services/contentService';
 import ProjectManager from './admin/ProjectManager';
 
 const AdminPanel: React.FC = () => {
-    const { data, updateHero, addGalleryItem, removeGalleryItem, updateSector, setIsAdmin, isLoading, addCarouselItem, deleteCarouselItem } = useAppData();
-    const [activeTab, setActiveTab] = useState<'content' | 'gallery' | 'carousel' | 'donors' | 'volunteers' | 'projects'>('content');
+    const { data, addGalleryItem, removeGalleryItem, updateSector, setIsAdmin, isLoading, addCarouselItem, deleteCarouselItem, updateCarouselItem } = useAppData();
+    const [activeTab, setActiveTab] = useState<'gallery' | 'carousel' | 'donors' | 'volunteers' | 'projects'>('carousel');
 
     // Carousel State
     const [newCarouselItem, setNewCarouselItem] = useState({ title: '', detail: '' });
     const [carouselFile, setCarouselFile] = useState<File | null>(null);
-
-    // We initialize state from data, but data might be empty initially if loading. 
-    // We initialize state from data, but data might be empty initially if loading. 
-    // Ideally use useEffect to sync local form state when data loads.
-    const [heroForm, setHeroForm] = useState(data.hero);
-
-    // Effect to update form when data loads (fixing empty form on refresh)
-    React.useEffect(() => {
-        if (data.hero) setHeroForm(data.hero);
-    }, [data.hero]);
+    const [editingCarouselItem, setEditingCarouselItem] = useState<any | null>(null);
+    const [editCarouselFile, setEditCarouselFile] = useState<File | null>(null);
 
     const [newMedia, setNewMedia] = useState({ title: '', category: 'Charity' });
     const [selectedGalleryFiles, setSelectedGalleryFiles] = useState<FileList | null>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [isUploading, setIsUploading] = useState(false);
 
-    const handleTextSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        updateHero({
-            title: heroForm.title,
-            subtitle: heroForm.subtitle,
-            description: heroForm.description
-        });
-        alert('Text content updated!');
-    };
-
-    const handleImageSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        if (selectedFile) {
-            try {
-                setIsUploading(true);
-                const downloadUrl = await uploadMedia(selectedFile);
-                await updateHero({ image: downloadUrl });
-                alert('Hero image updated successfully!');
-                setSelectedFile(null);
-            } catch (error) {
-                console.error("Upload failed", error);
-                alert('Failed to upload image.');
-            } finally {
-                setIsUploading(false);
-            }
-        } else if (heroForm.image) {
-            // Fallback if they just wanted to keep the current URL but clicked update? 
-            // Or maybe they pasted a URL?
-            // For now, let's support both: if file, upload; else if text changed, update text.
-            updateHero({ image: heroForm.image });
-            alert('Hero image updated!');
-        }
-    };
 
     const handleMediaSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -137,6 +95,38 @@ const AdminPanel: React.FC = () => {
         }
     };
 
+    const handleCarouselUpdate = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!editingCarouselItem) return;
+
+        try {
+            setIsUploading(true);
+            let mediaUrl = editingCarouselItem.mediaUrl;
+            let mediaType = editingCarouselItem.mediaType;
+
+            if (editCarouselFile) {
+                mediaUrl = await uploadMedia(editCarouselFile);
+                mediaType = editCarouselFile.type.startsWith('video') ? 'video' : 'image';
+            }
+
+            await updateCarouselItem(editingCarouselItem.id, {
+                title: editingCarouselItem.title,
+                detail: editingCarouselItem.detail,
+                mediaUrl,
+                mediaType
+            });
+
+            alert("Carousel item updated!");
+            setEditingCarouselItem(null);
+            setEditCarouselFile(null);
+        } catch (error) {
+            console.error(error);
+            alert("Failed to update carousel item.");
+        } finally {
+            setIsUploading(false);
+        }
+    };
+
     // Optimization: Render sidebar immediately
     // if (isLoading) return <div className="p-10">Loading Data...</div>;
 
@@ -173,13 +163,6 @@ const AdminPanel: React.FC = () => {
                 <nav className="flex-1 px-4 space-y-2 overflow-y-auto">
                     <div className="text-xs font-bold text-green-400 uppercase tracking-widest px-4 mb-2 mt-2">Main Menu</div>
 
-                    <button
-                        onClick={() => { setActiveTab('content'); setIsSidebarOpen(false); }}
-                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all duration-200 group ${activeTab === 'content' ? 'bg-green-700 text-white shadow-lg translate-x-1 font-semibold' : 'text-green-100 hover:bg-green-800 hover:text-white'}`}
-                    >
-                        <svg className={`w-6 h-6 ${activeTab === 'content' ? 'text-green-300' : 'text-green-400 group-hover:text-white'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
-                        Content Manager
-                    </button>
 
                     <button
                         onClick={() => { setActiveTab('carousel'); setIsSidebarOpen(false); }}
@@ -253,90 +236,67 @@ const AdminPanel: React.FC = () => {
                         </div>
                     ) : (
                         <div className="animate-in fade-in duration-500 slide-in-from-bottom-4">
-                            {activeTab === 'content' && (
-                                <div className="max-w-3xl bg-white p-10 rounded-3xl shadow-xl border border-gray-100/50">
-                                    <div className="flex items-center gap-4 mb-8 pb-8 border-b border-gray-100">
-                                        <div className="p-3 bg-green-50 rounded-xl">
-                                            <svg className="w-8 h-8 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-                                        </div>
-                                        <div>
-                                            <h3 className="text-2xl font-bold text-gray-900">Landing Page Content</h3>
-                                            <p className="text-gray-500 text-sm">Update the main hero section text and media.</p>
-                                        </div>
-                                    </div>
-
-                                    <form onSubmit={handleTextSubmit} className="space-y-6 mb-10">
-                                        <div>
-                                            <label className="block text-sm font-bold mb-2 text-gray-700">Hero Title</label>
-                                            <input
-                                                className="w-full p-4 border border-gray-200 rounded-xl focus:ring-4 focus:ring-green-500/10 focus:border-green-500 transition-all outline-none font-medium text-gray-800"
-                                                value={heroForm.title}
-                                                onChange={e => setHeroForm({ ...heroForm, title: e.target.value })}
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-bold mb-1 text-gray-700">Hero Subtitle</label>
-                                            <input className="w-full p-3 border rounded-lg" value={heroForm.subtitle} onChange={e => setHeroForm({ ...heroForm, subtitle: e.target.value })} />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-bold mb-1 text-gray-700">Description</label>
-                                            <textarea className="w-full p-3 border rounded-lg h-32" value={heroForm.description} onChange={e => setHeroForm({ ...heroForm, description: e.target.value })} />
-                                        </div>
-                                        <button className="w-full bg-green-700 text-white py-3 rounded-lg font-bold hover:bg-green-800 transition-colors">Save Text Changes</button>
-                                    </form>
-
-                                    {/* Image Section - Visually merged but independent logic */}
-                                    <div className="mt-8">
-                                        <form onSubmit={handleImageSubmit} className="space-y-4">
-                                            <div>
-                                                <label className="block text-sm font-bold mb-1 text-gray-700">Hero Image</label>
-                                                <div className="flex gap-2 items-center">
-                                                    <input
-                                                        type="file"
-                                                        accept="image/*"
-                                                        className="w-full p-2 border rounded-lg bg-white"
-                                                        onChange={(e) => {
-                                                            if (e.target.files && e.target.files[0]) {
-                                                                setSelectedFile(e.target.files[0]);
-                                                            }
-                                                        }}
-                                                    />
-                                                    <button
-                                                        disabled={isUploading}
-                                                        className={`bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed`}
-                                                    >
-                                                        {isUploading ? 'Uploading...' : 'Update Image'}
-                                                    </button>
-                                                </div>
-
-                                                {/* Read-only URL display */}
-                                                <input
-                                                    className="w-full p-2 border rounded-lg bg-gray-50 text-xs text-gray-500 mt-2"
-                                                    value={heroForm.image}
-                                                    readOnly
-                                                    placeholder="Current Image URL"
-                                                />
-
-                                                {heroForm.image && (
-                                                    <div className="mt-4">
-                                                        <p className="text-xs text-gray-500 mb-2">Current Preview:</p>
-                                                        <img src={heroForm.image} alt="Hero Preview" className="h-40 w-full object-cover rounded-lg border" />
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </form>
-
-                                    </div>
-                                </div>
-                            )}
 
                             {activeTab === 'carousel' && (
                                 <div className="space-y-8">
                                     <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-200">
-                                        <h3 className="text-2xl font-bold mb-6 text-green-900">Add Carousel Item</h3>
-                                        <p className="text-sm text-gray-500 mb-6">Add up to 5 items to the hero carousel.</p>
+                                        <h3 className="text-2xl font-bold mb-6 text-green-900">{editingCarouselItem ? 'Edit Carousel Item' : 'Add Carousel Item'}</h3>
+                                        <p className="text-sm text-gray-500 mb-6">
+                                            {editingCarouselItem ? 'Modify the details of the selected carousel item.' : 'Add up to 5 items to the hero carousel.'}
+                                        </p>
 
-                                        {data.heroCarousel.length >= 5 ? (
+                                        {editingCarouselItem ? (
+                                            <form onSubmit={handleCarouselUpdate} className="space-y-4">
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                    <input
+                                                        placeholder="Item Title"
+                                                        className="p-3 border rounded-lg col-span-1 md:col-span-2"
+                                                        value={editingCarouselItem.title}
+                                                        onChange={e => setEditingCarouselItem({ ...editingCarouselItem, title: e.target.value })}
+                                                        required
+                                                    />
+                                                    <input
+                                                        placeholder="Short Detail"
+                                                        className="p-3 border rounded-lg col-span-1 md:col-span-2"
+                                                        value={editingCarouselItem.detail}
+                                                        onChange={e => setEditingCarouselItem({ ...editingCarouselItem, detail: e.target.value })}
+                                                        required
+                                                    />
+
+                                                    <div className="col-span-1 md:col-span-2">
+                                                        <label className="block text-sm font-bold mb-1 text-gray-700">Change Media (Optional)</label>
+                                                        <input
+                                                            type="file"
+                                                            accept="image/*,video/*"
+                                                            className="w-full p-2 border rounded-lg bg-white"
+                                                            onChange={(e) => {
+                                                                if (e.target.files && e.target.files[0]) {
+                                                                    setEditCarouselFile(e.target.files[0]);
+                                                                }
+                                                            }}
+                                                        />
+                                                        <p className="text-xs text-gray-400 mt-1">Current URL: {editingCarouselItem.mediaUrl.substring(0, 50)}...</p>
+                                                    </div>
+
+                                                    <div className="col-span-1 md:col-span-2 flex gap-3">
+                                                        <button
+                                                            type="submit"
+                                                            disabled={isUploading}
+                                                            className="flex-1 bg-green-700 text-white py-3 rounded-lg font-bold hover:bg-green-800 disabled:opacity-50"
+                                                        >
+                                                            {isUploading ? 'Updating...' : 'Save Changes'}
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => { setEditingCarouselItem(null); setEditCarouselFile(null); }}
+                                                            className="px-6 py-3 border border-gray-300 rounded-lg font-bold hover:bg-gray-50"
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        ) : data.heroCarousel.length >= 5 ? (
                                             <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 p-4 rounded-lg mb-6">
                                                 Maximum limit of 5 carousel items reached. Delete an item to add a new one.
                                             </div>
@@ -410,13 +370,22 @@ const AdminPanel: React.FC = () => {
                                                         <p className="text-sm text-gray-600 mt-1 line-clamp-2">{item.detail}</p>
                                                         <p className="text-xs text-gray-400 mt-2 break-all">URL: {item.mediaUrl}</p>
                                                     </div>
-                                                    <button
-                                                        onClick={() => deleteCarouselItem(item.id)}
-                                                        className="absolute top-2 right-2 bg-white text-red-600 hover:bg-red-600 hover:text-white p-2 rounded-full shadow-md transition-all z-10"
-                                                        title="Delete Item"
-                                                    >
-                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                                                    </button>
+                                                    <div className="absolute top-2 right-2 flex gap-2 z-10">
+                                                        <button
+                                                            onClick={() => { setEditingCarouselItem(item); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                                                            className="bg-white text-blue-600 hover:bg-blue-600 hover:text-white p-2 rounded-full shadow-md transition-all"
+                                                            title="Edit Item"
+                                                        >
+                                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                                        </button>
+                                                        <button
+                                                            onClick={() => deleteCarouselItem(item.id)}
+                                                            className="bg-white text-red-600 hover:bg-red-600 hover:text-white p-2 rounded-full shadow-md transition-all"
+                                                            title="Delete Item"
+                                                        >
+                                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             ))}
                                             {data.heroCarousel.length === 0 && (

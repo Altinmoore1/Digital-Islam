@@ -6,9 +6,9 @@ const Hero: React.FC = () => {
   const { data, isLoading } = useAppData();
 
   // Use data from context, with fallbacks
-  const title = data.hero.title || "Edutainment Through";
-  const subtitle = data.hero.subtitle || "Divine Inspiration";
-  const description = data.hero.description || "Digital Islam is a faith-based digital platform dedicated to educating, inspiring, and uplifting communities through Islamic knowledge, charity, and creative engagement. We promote social responsibility and spiritual growth.";
+  const title = "Empowering Communities Through";
+  const subtitle = "Knowledge and Compassion.";
+  const description = "Digital Islam is a faith-based digital platform dedicated to educating, inspiring, and uplifting communities through Islamic knowledge, charity, and creative engagement. We promote social responsibility and spiritual growth.";
 
   return (
     <section id="home" className="relative pt-32 pb-20 overflow-hidden">

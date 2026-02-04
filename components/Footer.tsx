@@ -22,6 +22,20 @@ const Footer: React.FC = () => {
                   <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" />
                 </svg>
               </a>
+              <a href="https://www.tiktok.com/@digital.islam0?_r=1&_t=ZS-93YgiyrHmCN" target="_blank" rel="noreferrer" className="w-10 h-10 bg-white shadow-sm rounded-full flex items-center justify-center text-green-700 hover:bg-green-700 hover:text-white transition-all">
+                <svg
+                  className="w-5 h-5"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M17.5 3c.9 1.6 2.3 2.8 4 3.2v3.2c-1.9 0-3.6-.6-5-1.6v7.1c0 3.5-2.9 6.3-6.5 6.3S3.5 18.4 3.5 15s2.9-6.3 6.5-6.3c.4 0 .7 0 1 .1v3.4c-.3-.1-.6-.2-1-.2-1.6 0-3 1.3-3 3s1.4 3 3 3 3-1.3 3-3V3h4z" />
+                </svg>
+
+
+
+
+              </a>
             </div>
           </div>
 

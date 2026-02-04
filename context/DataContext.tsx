@@ -3,12 +3,6 @@ import { getLandingPageContent, updateLandingPageContent, getVolunteers, getDono
 import { Project, CarouselItem } from '../types';
 
 // Types based on the Admin Panel usage
-interface HeroData {
-    title: string;
-    subtitle: string;
-    description: string;
-    image: string;
-}
 
 interface GalleryItem {
     id: string; // Changed to string for Firestore ID
@@ -40,7 +34,6 @@ interface Volunteer {
 }
 
 interface AppData {
-    hero: HeroData;
     gallery: GalleryItem[];
     donations: Donor[];
     volunteers: Volunteer[];
@@ -50,7 +43,6 @@ interface AppData {
 
 interface DataContextType {
     data: AppData;
-    updateHero: (hero: Partial<HeroData>) => void;
     addGalleryItem: (item: GalleryItem) => void;
     removeGalleryItem: (id: string) => void;
     updateSector: (id: number, data: any) => void; // Placeholder
@@ -70,12 +62,6 @@ const DataContext = createContext<DataContextType | undefined>(undefined);
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     // Initial Mock Data
     const [data, setData] = useState<AppData>({
-        hero: {
-            title: 'Edutainment Through',
-            subtitle: 'Divine Inspiration',
-            description: 'Digital Islam is a faith-based digital platform dedicated to educating, inspiring, and uplifting communities through Islamic knowledge, charity, and creative engagement. We promote social responsibility and spiritual growth.',
-            image: '',
-        },
         gallery: [],
         donations: [
             { id: 1, name: 'John Doe', amount: '$500', date: '2024-03-15', method: 'Stripe' },
@@ -95,13 +81,12 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const fetchData = async () => {
             setIsLoading(true);
             try {
-                const [volunteersData, donorsData, galleryData, projectsData, carouselData, heroData] = await Promise.all([
+                const [volunteersData, donorsData, galleryData, projectsData, carouselData] = await Promise.all([
                     getVolunteers(),
                     getDonors(),
                     getGallery(),
                     getProjects(),
-                    getHeroCarousel(),
-                    getLandingPageContent()
+                    getHeroCarousel()
                 ]);
 
                 setData(prev => ({
@@ -111,12 +96,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
                     gallery: galleryData as GalleryItem[],
                     projects: projectsData as Project[],
                     heroCarousel: carouselData as CarouselItem[],
-                    hero: heroData ? {
-                        title: heroData.heroTitle,
-                        subtitle: heroData.heroSubtitle,
-                        description: heroData.heroDescription,
-                        image: heroData.heroMediaUrl
-                    } : prev.hero
                 }));
             } catch (error) {
                 console.error("Failed to fetch admin data", error);
@@ -127,26 +106,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         fetchData();
     }, []);
 
-    const updateHero = async (heroUpdate: Partial<HeroData>) => {
-        // Optimistic update
-        setData(prev => ({ ...prev, hero: { ...prev.hero, ...heroUpdate } }));
-
-        // Persist to Firestore
-        const firestoreUpdate: any = {};
-        if (heroUpdate.title !== undefined) firestoreUpdate.heroTitle = heroUpdate.title;
-        if (heroUpdate.subtitle !== undefined) firestoreUpdate.heroSubtitle = heroUpdate.subtitle;
-        if (heroUpdate.description !== undefined) firestoreUpdate.heroDescription = heroUpdate.description;
-        if (heroUpdate.image !== undefined) firestoreUpdate.heroMediaUrl = heroUpdate.image;
-
-        try {
-            if (Object.keys(firestoreUpdate).length > 0) {
-                await updateLandingPageContent(firestoreUpdate);
-            }
-        } catch (err) {
-            console.error("Failed to persist hero update", err);
-            alert("Failed to save to server, changes are local only.");
-        }
-    };
 
     const addGalleryItem = async (item: GalleryItem) => {
         // Optimistic update (with temporary ID if needed, but we essentially wait for ID usually or just fetch again)
@@ -275,7 +234,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return (
         <DataContext.Provider value={{
             data,
-            updateHero,
             addGalleryItem,
             removeGalleryItem,
             updateSector,
